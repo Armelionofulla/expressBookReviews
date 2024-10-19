@@ -72,18 +72,22 @@ regd_users.delete("/auth/review/:isbn", (req, res) => {
     if (!token) {
         return res.status(401).json({ message: 'Access token is missing or invalid' });
     }
+
     try {
         const decoded = jwt.verify(token, 'your_jwt_secret');
         const username = decoded.username;
         const { isbn } = req.params;
+
         if (!books[isbn]) {
             return res.status(404).json({ message: 'Book not found' });
         }
+
         if (!books[isbn].reviews || !books[isbn].reviews[username]) {
             return res.status(404).json({ message: 'Review not found' });
         }
 
         delete books[isbn].reviews[username];
+
         return res.status(200).json({ message: 'Review deleted successfully' });
     } catch (error) {
         return res.status(401).json({ message: 'Invalid token' });
